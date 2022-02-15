@@ -1,0 +1,16 @@
+Package: DPMUnc
+Title: Dirichlet Process Mixture Modeller Taking Uncertainty into Account
+Version: 0.0.0.9000
+Maintainer: Kath Nicholls <kcn25@cam.ac.uk>
+Author: c(
+    person("Kath", "Nicholls", email = "kcn25@cam.ac.uk", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-4070-1317")),
+    person("Chris", "Wallace", role = "aut", email = "cew54@cam.ac.uk", comment = c(ORCID = "0000-0001-9755-1703")),
+    person("Paul", "Kirk", role = "aut", email = "paul.kirk@mrc-bsu.cam.ac.uk", comment = c(ORCID = "0000-0002-5931-7489"))
+    )
+Description: Performs clustering using a Dirichlet Process Mixture Modeller with an additional set of latent variables for the true underlying data points. The model assumes that the observed data are noisy versions of these underlying data points.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Imports: Rcpp (>= 1.0.8)
+LinkingTo: Rcpp, RcppArmadillo
