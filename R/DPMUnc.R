@@ -1,3 +1,4 @@
+#!/usr/bin/Rscript
 #' Scale observed data so variance of every variable is 1
 #'
 #' @param obsData The observed data in matrix form (n observations x p variables)
