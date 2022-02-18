@@ -10,6 +10,8 @@ jobs:
       - run:
           name: setup
           command: |
+            wget -qO- "https://yihui.org/tinytex/install-bin-unix.sh" | sh
+            which pdflatex
             mkdir artifacts
             # Tell R to use the provided compilers
             mkdir ~/.R
