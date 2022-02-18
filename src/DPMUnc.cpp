@@ -1,7 +1,7 @@
 #include <RcppArmadillo.h>
 #include <cmath>
 #include <math.h>
-#include "ezETAProgressBar.hpp"
+#include "ezETAProgressBar.h"
 
 // A smaller number corresponds to a more serious and less verbose debug statement
 // So setting VERBOSITY here to a larger number means increasing the number of messages printed
