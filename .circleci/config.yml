@@ -79,6 +79,7 @@ jobs:
           name: install
           command: |
             which R
+            Rscript -e "install.packages('remotes')"
             Rscript -e "remotes::install_github('nichollskc/DPMUnc'); library(DPMUnc)"
           when:
             always
