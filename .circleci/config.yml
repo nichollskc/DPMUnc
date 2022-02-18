@@ -1,0 +1,71 @@
+version: 2.1
+jobs:
+  build_test:
+    docker:
+      - image: continuumio/miniconda3
+
+    steps:
+      # Checkout code with git
+      - checkout
+      - run:
+          name: setup
+          command: |
+            mkdir artifacts
+            # Tell R to use the provided compilers
+            mkdir ~/.R
+            echo 'CC=x86_64-conda_cos6-linux-gnu-cc' > ~/.R/Makevars
+            echo 'CXX=x86_64-conda_cos6-linux-gnu-c++' >> ~/.R/Makevars
+            echo 'CXX11STD= -std=gnu++11' >> ~/.R/Makevars
+          when:
+            always
+
+      # Try to recover an existing build to save us time
+      # We use a key for the cache which depends on the files that control the dependencies
+      - restore_cache:
+          key: v1-dependencies-{{ checksum "install_dependencies.sh" }}-{{ checksum "environment.yml" }}-{{ checksum "~/.R/Makevars" }}
+
+      - run:
+          name: install
+          command: |
+            echo $TAR
+            conda info -a
+            if [[ $(conda list -n DPMUnc) ]]
+            then
+                echo "Conda environment exists, nothing more to do"
+            else
+                echo "Need to install conda environment, installing mamba first - mamba is faster and more reliable than conda"
+                conda install mamba -c conda-forge
+            fi
+            source install_dependencies.sh
+            source activate DPMUnc
+            conda list
+            conda env export | tee artifacts/conda_environment_export.yml
+          when:
+            always
+
+       # Save the packages to the cache so we can save build time next time
+      - save_cache:
+          key: v1-dependencies-{{ checksum "install_dependencies.sh" }}-{{ checksum "environment.yml" }}-{{ checksum "~/.R/Makevars" }}
+          paths:
+            - "/opt/conda/envs/DPMUnc"
+
+      - run:
+          name: fresh_install
+          command: |
+            source activate DPMUnc
+            which R
+            R CMD build DPMUnc/
+
+            git status
+
+            R CMD check DPMUnc/
+          when:
+            always
+
+      - store_artifacts:
+          path: artifacts
+
+workflows:
+  full:
+    jobs:
+      - build_test
