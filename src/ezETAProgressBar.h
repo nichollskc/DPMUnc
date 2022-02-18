@@ -67,7 +67,7 @@ public:
 		sec -= hours*3600;
 		int mins = sec/60;
 		sec -= mins*60;
-		char tmp[8];
+		char tmp[16];
 		std::string out;
 		
 		if (days) {

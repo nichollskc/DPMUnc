@@ -447,10 +447,10 @@ class MixtureModellerOutputter {
         if (quiet) {
           ++progressBar;
         } else {
-          std::cout << iterations << " of " << totalIterations << " iterations\n";
-          std::cout << K << " clusters\n";
-          std::cout << alpha_concentration << " alpha\n";
-          std::cout << "counts per cluster\n" << clusterCounts.t() << "\n";
+          Rcout << iterations << " of " << totalIterations << " iterations\n";
+          Rcout << K << " clusters\n";
+          Rcout << alpha_concentration << " alpha\n";
+          Rcout << "counts per cluster\n" << clusterCounts.t() << "\n";
         }
       }
     }
