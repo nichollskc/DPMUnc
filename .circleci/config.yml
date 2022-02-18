@@ -10,7 +10,7 @@ jobs:
       - run:
           name: setup
           command: |
-            wget -qO- "https://yihui.org/tinytex/install-bin-unix.sh" | sh
+            apt-get update && apt-get install -y --no-install-recommends latexmk texlive
             which pdflatex
             mkdir artifacts
             # Tell R to use the provided compilers
