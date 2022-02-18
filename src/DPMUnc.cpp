@@ -464,15 +464,15 @@ class MixtureModellerOutputter {
                              double pLatentsGivenClusters) {
       if (iterations % thinningFreq == 0) {
         file_Allocations << clusterAllocations.t();
-        file_Latents << latentObservations.as_col().t();
         file_Alpha << alpha_concentration << std::endl;
+        file_pLatentsGivenClusters << pLatentsGivenClusters << std::endl;
       }
       if (saveClusterParams) {
         file_ClusterMeans << clusterMeans.as_col().t();
         file_ClusterVars << clusterVars.as_col().t();
       }
       if (saveLatentObs) {
-        file_pLatentsGivenClusters << pLatentsGivenClusters << std::endl;
+        file_Latents << latentObservations.as_col().t();
       }
     }
 };

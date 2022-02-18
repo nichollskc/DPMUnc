@@ -37,12 +37,16 @@ scale_data <- function(obsData, obsVars) {
 #' that the model has converged before using any of the results.
 #' @param thinningFreq Controls how many samples are saved. E.g. a value of 10 means
 #' every 10th sample will be saved.
-#' @param saveClusterParams Boolean, determining whether the cluster parameters (mean 
+#' @param saveClusterParams Boolean, determining whether the cluster parameters (mean
 #' and variance of every cluster) for every saved iteration should be saved in a file or not.
 #' Both cluster parameters and latent observations take up more space than other saved variables.
+#' The files clusterVars.tsv and clusterMeans.tsv will be created in either case, but
+#' will be left empty if saveClusterParams is FALSE.
 #' @param saveLatentObs Boolean, determining whether the latent observations (underlying true observations)
 #' for every saved iteration should be saved in a file or not. Both cluster parameters and
 #' latent observations take up more space than other saved variables.
+#' The file latentObservations.tsv will be created in either case, but
+#' will be left empty if saveLatentObs is FALSE.
 #' @param quiet Boolean. If FALSE, information will be printed to the terminal including
 #' current iteration, current value of K and number of items per cluster.
 #'
