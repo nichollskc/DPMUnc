@@ -22,6 +22,32 @@ using namespace Rcpp;
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
+// Append a single line containing the given vector, with elements separated
+// by commas. Append to the file stream given.
+void append_vec_cs(arma::vec vector, std::ofstream& file_stream) {
+  int final_index = vector.size() - 1;
+  for(int j=0; j < final_index; j++) {
+    file_stream << vector[j] << ",";
+  }
+  if (final_index > 0) {
+    file_stream << vector[final_index];
+  }
+  file_stream << std::endl;
+}
+
+// Append a single line containing the given vector, with elements separated
+// by commas. Append to the file stream given.
+void append_uvec_cs(arma::uvec vector, std::ofstream& file_stream) {
+  int final_index = vector.size() - 1;
+  for(int j=0; j < final_index; j++) {
+    file_stream << vector[j] << ",";
+  }
+  if (final_index > 0) {
+    file_stream << vector[final_index];
+  }
+  file_stream << std::endl;
+}
+
 arma::vec colMeans(arma::mat X) {
   arma::mat means_mat = arma::mean(X, 0);
   arma::vec means = arma::conv_to<arma::vec>::from(means_mat);
@@ -425,15 +451,15 @@ class MixtureModellerOutputter {
                              bool saveClusterParams,
                              bool saveLatentObs,
                              std::string outputDir) :
-          file_ClusterMeans(outputDir + "/clusterMeans.tsv"),
-          file_ClusterVars(outputDir + "/clusterVars.tsv"),
-          file_Allocations(outputDir + "/clusterAllocations.tsv"),
-          file_Latents(outputDir + "/latentObservations.tsv"),
-          file_pLatentsGivenClusters(outputDir + "/pLatentsGivenClusters.tsv"),
+          file_ClusterMeans(outputDir + "/clusterMeans.csv"),
+          file_ClusterVars(outputDir + "/clusterVars.csv"),
+          file_Allocations(outputDir + "/clusterAllocations.csv"),
+          file_Latents(outputDir + "/latentObservations.csv"),
+          file_pLatentsGivenClusters(outputDir + "/pLatentsGivenClusters.csv"),
           totalIterations(totalIterations), thinningFreq(thinningFreq),
           saveClusterParams(saveClusterParams), saveLatentObs(saveLatentObs),
           quiet(quiet), progressBar(totalIterations/thinningFreq) {
-      file_Alpha.open(outputDir + "/alpha.tsv", std::ios::app);
+      file_Alpha.open(outputDir + "/alpha.csv", std::ios::app);
       if (quiet) {
         progressBar.start();
       }
@@ -463,16 +489,16 @@ class MixtureModellerOutputter {
                              double alpha_concentration,
                              double pLatentsGivenClusters) {
       if (iterations % thinningFreq == 0) {
-        file_Allocations << clusterAllocations.t();
+        append_uvec_cs(clusterAllocations, file_Allocations);
         file_Alpha << alpha_concentration << std::endl;
         file_pLatentsGivenClusters << pLatentsGivenClusters << std::endl;
       }
       if (saveClusterParams) {
-        file_ClusterMeans << clusterMeans.as_col().t();
-        file_ClusterVars << clusterVars.as_col().t();
+        append_vec_cs(clusterMeans.as_col(), file_ClusterMeans);
+        append_vec_cs(clusterMeans.as_col(), file_ClusterVars);
       }
       if (saveLatentObs) {
-        file_Latents << latentObservations.as_col().t();
+        append_vec_cs(latentObservations.as_col(), file_Latents);
       }
     }
 };
