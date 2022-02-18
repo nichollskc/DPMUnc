@@ -60,7 +60,7 @@ DPMUnc <- function(obsData,obsVars,saveFileDir,seed,
                    K=floor(nrow(obsData)/2), nIts = 100000, thinningFreq = 10,
                    saveClusterParams=TRUE, saveLatentObs=FALSE,
                    quiet=TRUE) {
-  if(!file.exists(saveFileDir)) {
+  if(!dir.exists(saveFileDir)) {
       dir.create(saveFileDir, recursive=TRUE)
   }
 

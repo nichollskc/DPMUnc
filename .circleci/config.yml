@@ -54,11 +54,9 @@ jobs:
           command: |
             source activate DPMUnc
             which R
-            R CMD build DPMUnc/
-
+            R CMD build ./
             git status
-
-            R CMD check DPMUnc/
+            R CMD check ./
           when:
             always
 
