@@ -1,0 +1,93 @@
+---
+title: "Running_DPMUnc"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Running_DPMUnc}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Simulating data
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+We simulate data from 4 different clusters, a Gaussian Mixture Model. The model we use is that each cluster has a mean, and true data points are normally distributed about their cluster mean, with standard deviation 0.1. These true data values would not normally be available for analysis, instead we would have observed values, which are noisy versions of the true values. The noise varies randomly across the points, and the observed values are normally distributed around their true values.
+
+```{r simulate_data}
+set.seed(13)
+n = 50; d = 5; k = 4
+classes = sample(1:k, n, replace=TRUE)
+group_means = matrix(rep(classes, d), n, d)
+true_means = group_means + matrix(rnorm(n*d, sd=0.1),
+                                  nrow=n,
+                                  ncol=d)
+obsVars = matrix(rchisq(n*d,1),
+                 nrow=n,
+                 ncol=d)
+obsData = matrix(rnorm(n*d, mean=as.vector(true_means),
+                       sd=sqrt(as.vector(obsVars))),
+                 nrow=n,
+                 ncol=d)
+```
+
+This PCA plot shows the generated data points coloured by cluster. The true values (open circles) are close to the cluster means, but we have observational noise which means the data that we would actually have access to, the observed data (closed circles), are considerably more spread out. For each point, an arrow connects the true underlying value, which would not normally be available for analysis, to the observed value.
+
+```{r pcaplot}
+library(ggplot2)
+pca = prcomp(obsData)
+with_info = data.frame(pca$x)
+with_info$cluster = classes
+
+true_coords = scale(true_means, center = pca$center, scale=pca$scale) %*% pca$rotation
+colnames(true_coords) = paste0("true_", colnames(true_coords))
+with_info = cbind(with_info, true_coords)
+
+# The palette with black:
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#D55E00", "#0072B2", "#CC79A7")
+
+ggplot(with_info, aes(x=true_PC1, y=true_PC2, colour=factor({cluster}))) +
+  geom_point(size=4, shape=1) +
+  geom_point(size=4, mapping=aes(x=PC1, y=PC2)) +
+  geom_segment(aes(xend=PC1, yend=PC2), arrow=arrow(length = unit(0.01, "npc")), colour="grey") +
+  scale_colour_manual(values=cbbPalette) +
+  labs(x="PC1", y="PC2") +
+  theme(legend.position = "none")
+```
+
+This diagram illustrates that in a case like this, if only we had access to the true data, clustering would be trivial.
+
+# Running the model
+
+```{r types}
+print(class(obsData))
+print(class(obsVars))
+```
+
+```{r run_modeller}
+library(DPMUnc)
+for (seed in c(1,2,3,4,5)) {
+  DPMUnc(obsData, obsVars, saveFileDir = paste0("test_output/seed", seed), seed=seed, nIts=10000)
+}
+dir("test_output/seed1")
+```
+
+The output files essentially fall into 3 categories:
+
+Diagnostics to check convergence: alpha, pLatentsGivenClusters
+Results: clusterAllocations
+Potentially interesting information: clusterMeans, clusterVars, latentObservations (empty unless specified)
+
+Every file has a line for every iteration that is saved (by default every 10th iteration is saved). Some of these files have the potential to take up excessive space. In particular, every line in the latentObservations file will have d x numObservations entries and every line in the clusterMeans and clusterVars files has d x numClusters entries. To avoid unnecessary use of space, latentObservations are only saved to the file if saveLatentObs=TRUE is explicitly set, and there is also an option to avoid saving the clusterMeans and clusterVars by using saveClusterParams=FALSE.
+
+# Investigating output
+
+## Checking convergence
+
+With Markov Chain Monte Carlo methods like this one, it is important to perform checks for convergence. There is a wealth of literature on this topic, but here we suggest a few options that highlight the output returned by the method which can be convergence checks.
+
+Many convergence methods are designed for continuous parameters, and so are not well suited to this method where the main parameters of interest are the cluster allocations. Not only are these parameters discrete, but the values themselves carry no meaning - what is interesting is which points are assigned to the same cluster. E.g. if we had 3 points, the cluster allocations (1,1,2) and (2,2,1) are equivalent, even though the cluster labels themselves have swapped.
