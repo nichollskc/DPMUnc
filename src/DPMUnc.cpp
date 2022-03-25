@@ -492,13 +492,14 @@ class MixtureModellerOutputter {
         append_uvec_cs(clusterAllocations, file_Allocations);
         file_Alpha << alpha_concentration << std::endl;
         file_pLatentsGivenClusters << pLatentsGivenClusters << std::endl;
-      }
-      if (saveClusterParams) {
-        append_vec_cs(clusterMeans.as_col(), file_ClusterMeans);
-        append_vec_cs(clusterMeans.as_col(), file_ClusterVars);
-      }
-      if (saveLatentObs) {
-        append_vec_cs(latentObservations.as_col(), file_Latents);
+
+        if (saveClusterParams) {
+          append_vec_cs(clusterMeans.as_col(), file_ClusterMeans);
+          append_vec_cs(clusterMeans.as_col(), file_ClusterVars);
+        }
+        if (saveLatentObs) {
+          append_vec_cs(latentObservations.as_col(), file_Latents);
+        }
       }
     }
 };
