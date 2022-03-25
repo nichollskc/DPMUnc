@@ -505,6 +505,8 @@ class MixtureModellerOutputter {
         if (saveLatentObs) {
           append_vec_cs(latentObservations.as_col(), file_Latents);
         }
+
+        Rcpp::checkUserInterrupt();
       }
     }
 };
