@@ -436,6 +436,7 @@ class MixtureModellerOutputter {
     std::ofstream file_Latents;
     std::ofstream file_Alpha;
     std::ofstream file_pLatentsGivenClusters;
+    std::ofstream file_K;
 
     bool quiet;
     bool saveClusterParams;
@@ -456,6 +457,7 @@ class MixtureModellerOutputter {
           file_Allocations(outputDir + "/clusterAllocations.csv"),
           file_Latents(outputDir + "/latentObservations.csv"),
           file_pLatentsGivenClusters(outputDir + "/pLatentsGivenClusters.csv"),
+          file_K(outputDir + "/K.csv"),
           totalIterations(totalIterations), thinningFreq(thinningFreq),
           saveClusterParams(saveClusterParams), saveLatentObs(saveLatentObs),
           quiet(quiet), progressBar(totalIterations/thinningFreq) {
@@ -485,6 +487,7 @@ class MixtureModellerOutputter {
                              arma::mat clusterMeans,
                              arma::mat clusterVars,
                              arma::uvec clusterAllocations,
+                             int K,
                              arma::mat latentObservations,
                              double alpha_concentration,
                              double pLatentsGivenClusters) {
@@ -492,6 +495,8 @@ class MixtureModellerOutputter {
         append_uvec_cs(clusterAllocations, file_Allocations);
         file_Alpha << alpha_concentration << std::endl;
         file_pLatentsGivenClusters << pLatentsGivenClusters << std::endl;
+
+        file_K << K << std::endl;
 
         if (saveClusterParams) {
           append_vec_cs(clusterMeans.as_col(), file_ClusterMeans);
@@ -644,10 +649,12 @@ class MixtureModeller {
     void save_sample_to_file(int iterations) {
       // To calculate p(z|c), sum up marginal log likelihoods for each cluster
       double pLatentsGivenClusters = arma::sum(currentClustering.getLogMarginalLikelihood());
+      int K = currentClustering.getK();
       outputter.save_sample_to_file(iterations,
                                     clusterMeans,
                                     clusterVars,
                                     clusterAllocations,
+                                    K,
                                     latentObservations,
                                     alpha_concentration,
                                     pLatentsGivenClusters);
