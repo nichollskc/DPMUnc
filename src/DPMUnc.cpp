@@ -29,7 +29,7 @@ void append_vec_cs(arma::vec vector, std::ofstream& file_stream) {
   for(int j=0; j < final_index; j++) {
     file_stream << vector[j] << ",";
   }
-  if (final_index > 0) {
+  if (final_index >= 0) {
     file_stream << vector[final_index];
   }
   file_stream << std::endl;
@@ -42,7 +42,7 @@ void append_uvec_cs(arma::uvec vector, std::ofstream& file_stream) {
   for(int j=0; j < final_index; j++) {
     file_stream << vector[j] << ",";
   }
-  if (final_index > 0) {
+  if (final_index >= 0) {
     file_stream << vector[final_index];
   }
   file_stream << std::endl;
@@ -500,7 +500,7 @@ class MixtureModellerOutputter {
 
         if (saveClusterParams) {
           append_vec_cs(clusterMeans.as_col(), file_ClusterMeans);
-          append_vec_cs(clusterMeans.as_col(), file_ClusterVars);
+          append_vec_cs(clusterVars.as_col(), file_ClusterVars);
         }
         if (saveLatentObs) {
           append_vec_cs(latentObservations.as_col(), file_Latents);
