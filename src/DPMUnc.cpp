@@ -758,11 +758,13 @@ class MixtureModeller {
                     bool saveLatentObs,
                     std::string outputDir,
                     arma::uvec clusterAllocations,
+                    arma::mat latentObservations,
+                    double alpha_concentration,
                     double kappa0 = 0.01,
                     double alpha0 = 2,
                     double beta0 = 0.1)
         : observedData(observedData), observedVars(observedVars),
-          latentObservations(observedData),
+          latentObservations(latentObservations),
           clusterAllocations(clusterAllocations),
           a0(3), b0(4),
           outputter(totalIterations, thinningFreq, quiet, saveClusterParams, saveLatentObs, outputDir),
@@ -770,7 +772,7 @@ class MixtureModeller {
           currentClustering(&clusterParamPrior, clusterAllocations, observedData),
           clusteringExcludingObs(&clusterParamPrior, clusterAllocations, observedData),
           clusteringWithObsInEveryCluster(&clusterParamPrior, clusterAllocations, observedData),
-          alpha_concentration(1) {
+          alpha_concentration(alpha_concentration) {
       calculateClusterStats();
       run_iterations(totalIterations);
     }
@@ -809,6 +811,8 @@ void runDPMUnc(arma::mat observedData,
                std::string outputDir,
                arma::uvec clusterAllocations) {
   DEBUG(4, "Initialised modeller with data\n" << observedData)
+  arma::mat latentObservations = observedData;
+  double alpha_concentration = 1;
   MixtureModeller(observedData,
                   observedVars,
                   totalIterations,
@@ -817,5 +821,7 @@ void runDPMUnc(arma::mat observedData,
                   saveClusterParams,
                   saveLatentObs,
                   outputDir,
-                  clusterAllocations);
+                  clusterAllocations,
+                  latentObservations,
+                  alpha_concentration);
 }
