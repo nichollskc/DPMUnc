@@ -452,16 +452,16 @@ class MixtureModellerOutputter {
                              bool saveClusterParams,
                              bool saveLatentObs,
                              std::string outputDir) :
-          file_ClusterMeans(outputDir + "/clusterMeans.csv"),
-          file_ClusterVars(outputDir + "/clusterVars.csv"),
-          file_Allocations(outputDir + "/clusterAllocations.csv"),
-          file_Latents(outputDir + "/latentObservations.csv"),
-          file_pLatentsGivenClusters(outputDir + "/pLatentsGivenClusters.csv"),
-          file_K(outputDir + "/K.csv"),
           totalIterations(totalIterations), thinningFreq(thinningFreq),
           saveClusterParams(saveClusterParams), saveLatentObs(saveLatentObs),
           quiet(quiet), progressBar(totalIterations/thinningFreq) {
       file_Alpha.open(outputDir + "/alpha.csv", std::ios::app);
+      file_ClusterMeans.open(outputDir + "/clusterMeans.csv", std::ios::app);
+      file_ClusterVars.open(outputDir + "/clusterVars.csv", std::ios::app);
+      file_Allocations.open(outputDir + "/clusterAllocations.csv", std::ios::app);
+      file_Latents.open(outputDir + "/latentObservations.csv", std::ios::app);
+      file_pLatentsGivenClusters.open(outputDir + "/pLatentsGivenClusters.csv", std::ios::app);
+      file_K.open(outputDir + "/K.csv", std::ios::app);
       if (quiet) {
         progressBar.start();
       }
