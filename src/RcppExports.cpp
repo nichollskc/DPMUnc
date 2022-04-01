@@ -29,9 +29,30 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// resumeDPMUnc
+void resumeDPMUnc(arma::mat observedData, arma::mat observedVars, int remainingIterations, int thinningFreq, bool quiet, bool saveClusterParams, bool saveLatentObs, std::string outputDir, arma::uvec clusterAllocations, arma::mat latentObservations, double alpha_concentration);
+RcppExport SEXP _DPMUnc_resumeDPMUnc(SEXP observedDataSEXP, SEXP observedVarsSEXP, SEXP remainingIterationsSEXP, SEXP thinningFreqSEXP, SEXP quietSEXP, SEXP saveClusterParamsSEXP, SEXP saveLatentObsSEXP, SEXP outputDirSEXP, SEXP clusterAllocationsSEXP, SEXP latentObservationsSEXP, SEXP alpha_concentrationSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type observedData(observedDataSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type observedVars(observedVarsSEXP);
+    Rcpp::traits::input_parameter< int >::type remainingIterations(remainingIterationsSEXP);
+    Rcpp::traits::input_parameter< int >::type thinningFreq(thinningFreqSEXP);
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    Rcpp::traits::input_parameter< bool >::type saveClusterParams(saveClusterParamsSEXP);
+    Rcpp::traits::input_parameter< bool >::type saveLatentObs(saveLatentObsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type outputDir(outputDirSEXP);
+    Rcpp::traits::input_parameter< arma::uvec >::type clusterAllocations(clusterAllocationsSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type latentObservations(latentObservationsSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha_concentration(alpha_concentrationSEXP);
+    resumeDPMUnc(observedData, observedVars, remainingIterations, thinningFreq, quiet, saveClusterParams, saveLatentObs, outputDir, clusterAllocations, latentObservations, alpha_concentration);
+    return R_NilValue;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_DPMUnc_runDPMUnc", (DL_FUNC) &_DPMUnc_runDPMUnc, 9},
+    {"_DPMUnc_resumeDPMUnc", (DL_FUNC) &_DPMUnc_resumeDPMUnc, 11},
     {NULL, NULL, 0}
 };
 

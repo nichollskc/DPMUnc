@@ -5,3 +5,7 @@ runDPMUnc <- function(observedData, observedVars, totalIterations, thinningFreq,
     invisible(.Call(`_DPMUnc_runDPMUnc`, observedData, observedVars, totalIterations, thinningFreq, quiet, saveClusterParams, saveLatentObs, outputDir, clusterAllocations))
 }
 
+resumeDPMUnc <- function(observedData, observedVars, remainingIterations, thinningFreq, quiet, saveClusterParams, saveLatentObs, outputDir, clusterAllocations, latentObservations, alpha_concentration) {
+    invisible(.Call(`_DPMUnc_resumeDPMUnc`, observedData, observedVars, remainingIterations, thinningFreq, quiet, saveClusterParams, saveLatentObs, outputDir, clusterAllocations, latentObservations, alpha_concentration))
+}
+

@@ -531,7 +531,7 @@ class MixtureModeller {
     Clustering clusteringExcludingObs;
     Clustering clusteringWithObsInEveryCluster;
 
-    // K x d matrix
+    // n x d matrix
     arma::mat latentObservations;
 
     // K x d matrices
@@ -726,14 +726,18 @@ class MixtureModeller {
     }
 
     void next_iteration(int iterations) {
+      // latentObservations, clusterAllocations -> clusterAllocations
       resample_allocations();
 
       // Having completed the Gibbs sampling for the component indicator
       // variables, we now sample a new alpha (see Escobar and West, 1995)
+      // K, nObs, alpha_concentration -> alpha_concentration
       resample_alpha();
 
+      // clusterAllocations, observedData -> clusterMeans, clusterVars
       resample_cluster_params();
 
+      // observedData, observedVars, clusterMeans, clusterVars, clusterAllocations -> latentObservations
       resample_latent_observations();
 
       // Now need to update the component-specific statistics:
@@ -816,6 +820,59 @@ void runDPMUnc(arma::mat observedData,
   MixtureModeller(observedData,
                   observedVars,
                   totalIterations,
+                  thinningFreq,
+                  quiet,
+                  saveClusterParams,
+                  saveLatentObs,
+                  outputDir,
+                  clusterAllocations,
+                  latentObservations,
+                  alpha_concentration);
+}
+
+// resumeDPMUnc - Resume running Dirichlet Process Mixture Modeller taking uncertainty of data points into account
+//
+// @param observedData The observed data in matrix form (n observations x p variables)
+// @param observedVars The observed variances of the data (n observations x p variables)
+// @param remainingIterations Remaining number of iterations to run. The user should check they are happy
+// that the model has converged before using any of the results.
+// @param thinningFreq Controls how many samples are saved. E.g. a value of 10 means
+// every 10th sample will be saved.
+// @param quiet Boolean. If FALSE, information will be printed to the terminal including
+// current iteration, current value of K and number of items per cluster.
+// @param saveClusterParams Boolean, determining whether the cluster parameters (mean 
+// and variance of every cluster) for every saved iteration should be saved in a file or not.
+// Both cluster parameters and latent observations take up more space than other saved variables.
+// @param saveLatentObs Boolean, determining whether the latent observations (underlying true observations)
+// for every saved iteration should be saved in a file or not. Both cluster parameters and
+// latent observations take up more space than other saved variables.
+// @param clusterAllocations Vector giving the cluster that each data point is allocated to.
+// @param latentObservations Matrix of form (n observations x p variables) with each row giving the latent estimated "true"
+// position of one of the data points.
+// @param alpha_concentration Current value of the concentration parameter alpha.
+// @param outputDir Directory where all output will be saved, and where existing output should be found
+//
+// @export
+//
+// [[Rcpp::export]]
+void resumeDPMUnc(arma::mat observedData,
+                  arma::mat observedVars,
+                  int remainingIterations,
+                  int thinningFreq,
+                  bool quiet,
+                  bool saveClusterParams,
+                  bool saveLatentObs,
+                  std::string outputDir,
+                  arma::uvec clusterAllocations,
+                  arma::mat latentObservations,
+                  double alpha_concentration) {
+  DEBUG(4, "Reinitialised modeller with data\n" << observedData)
+  DEBUG(4, "Latent obs at resumption\n" << latentObservations)
+  DEBUG(4, "Cluster allocations at resumption\n" << clusterAllocations)
+  DEBUG(4, "Alpha at resumption\n" << alpha_concentration)
+  MixtureModeller(observedData,
+                  observedVars,
+                  remainingIterations,
                   thinningFreq,
                   quiet,
                   saveClusterParams,

@@ -36,11 +36,15 @@ every 10th sample will be saved.}
 
 \item{saveClusterParams}{Boolean, determining whether the cluster parameters (mean
 and variance of every cluster) for every saved iteration should be saved in a file or not.
-Both cluster parameters and latent observations take up more space than other saved variables.}
+Both cluster parameters and latent observations take up more space than other saved variables.
+The files clusterVars.csv and clusterMeans.csv will be created in either case, but
+will be left empty if saveClusterParams is FALSE.}
 
 \item{saveLatentObs}{Boolean, determining whether the latent observations (underlying true observations)
 for every saved iteration should be saved in a file or not. Both cluster parameters and
-latent observations take up more space than other saved variables.}
+latent observations take up more space than other saved variables.
+The file latentObservations.csv will be created in either case, but
+will be left empty if saveLatentObs is FALSE.}
 
 \item{quiet}{Boolean. If FALSE, information will be printed to the terminal including
 current iteration, current value of K and number of items per cluster.}
