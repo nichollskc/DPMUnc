@@ -66,6 +66,9 @@ scale_data <- function(obsData, obsVars) {
 #' will be left empty if saveLatentObs is FALSE.
 #' @param quiet Boolean. If FALSE, information will be printed to the terminal including
 #' current iteration, current value of K and number of items per cluster.
+#' @param scaleData Boolean. If TRUE, data will be scaled so that the variance of every
+#' variable (column) in obsData is 1 (and obsVars will be scaled to fit this rescaling).
+#' Else, the raw data will be used.
 #'
 #' @export
 #'
@@ -80,16 +83,18 @@ scale_data <- function(obsData, obsVars) {
 DPMUnc <- function(obsData,obsVars,saveFileDir,seed,
                    K=floor(nrow(obsData)/2), nIts = 100000, thinningFreq = 10,
                    saveClusterParams=TRUE, saveLatentObs=FALSE,
-                   quiet=TRUE) {
+                   quiet=TRUE, scaleData=FALSE) {
   if(!dir.exists(saveFileDir)) {
       dir.create(saveFileDir, recursive=TRUE)
   }
 
   set.seed(seed, sample.kind="Rejection", normal.kind="Inversion", kind="Mersenne-Twister")
 
-  scaled <- scale_data(obsData, obsVars)
-  obsData <- scaled$data
-  obsVars <- scaled$vars
+  if (scaleData) {
+      scaled <- scale_data(obsData, obsVars)
+      obsData <- scaled$data
+      obsVars <- scaled$vars
+  }
 
   # start in an odd place. convergence longer, but avoids getting stuck in kmeans solution
   kmeansInit             <- kmeans(obsData, centers = K)
@@ -125,6 +130,9 @@ DPMUnc <- function(obsData,obsVars,saveFileDir,seed,
 #' will be left empty if saveLatentObs is FALSE.
 #' @param quiet Boolean. If FALSE, information will be printed to the terminal including
 #' current iteration, current value of K and number of items per cluster.
+#' @param scaleData Boolean. If TRUE, data will be scaled so that the variance of every
+#' variable (column) in obsData is 1 (and obsVars will be scaled to fit this rescaling).
+#' Else, the raw data will be used.
 #'
 #' @export
 #'
@@ -140,7 +148,7 @@ DPMUnc <- function(obsData,obsVars,saveFileDir,seed,
 experimental_resumeDPMUnc <- function(obsData,obsVars,saveFileDir,seed,
                    K=floor(nrow(obsData)/2), nIts = 100000, thinningFreq = 10,
                    saveClusterParams=TRUE, saveLatentObs=FALSE,
-                   quiet=TRUE) {
+                   quiet=TRUE, scaleData=FALSE) {
   numLinesSoFar = count_lines(paste0(saveFileDir, "/alpha.csv"))
   latentObservations = read_line_n(paste0(saveFileDir, "/latentObservations.csv"), numLinesSoFar, nDim=ncol(obsData))
   clusterAllocations = read_line_n(paste0(saveFileDir, "/clusterAllocations.csv"), numLinesSoFar, nDim=1)
@@ -152,9 +160,11 @@ experimental_resumeDPMUnc <- function(obsData,obsVars,saveFileDir,seed,
 
   set.seed(seed, sample.kind="Rejection", normal.kind="Inversion", kind="Mersenne-Twister")
 
-  scaled <- scale_data(obsData, obsVars)
-  obsData <- scaled$data
-  obsVars <- scaled$vars
+  if (scaleData) {
+      scaled <- scale_data(obsData, obsVars)
+      obsData <- scaled$data
+      obsVars <- scaled$vars
+  }
 
   resumeDPMUnc(obsData, obsVars,
                remainingIts, thinningFreq, quiet,
