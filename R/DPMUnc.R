@@ -107,7 +107,7 @@ DPMUnc <- function(obsData,obsVars,saveFileDir,seed,
             currentAllocations)
 }
 
-#' resumeDPMUnc - Resume run of Dirichlet Process Mixture Modeller taking uncertainty of data points into account
+#' experimental_resumeDPMUnc - Resume run of Dirichlet Process Mixture Modeller taking uncertainty of data points into account
 #'
 #' @param obsData The observed data in matrix form (n observations x p variables)
 #' @param obsVars The observed variances of the data (n observations x p variables)
