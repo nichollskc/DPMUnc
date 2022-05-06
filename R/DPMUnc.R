@@ -49,6 +49,9 @@ scale_data <- function(obsData, obsVars) {
 #' @param obsVars The observed variances of the data (n observations x p variables)
 #' @param saveFileDir Directory where all output will be saved
 #' @param seed Seed for random number generator, to make the function deterministic.
+#' @param kappa0 Hyperparameter for Normal-Gamma prior on cluster parameters
+#' @param alpha0 Hyperparameter for Normal-Gamma prior on cluster parameters
+#' @param beta0 Hyperparameter for Normal-Gamma prior on cluster parameters
 #' @param K Initial number of clusters.
 #' @param nIts Total number of iterations to run. The user should check they are happy
 #' that the model has converged before using any of the results.
@@ -79,8 +82,12 @@ scale_data <- function(obsData, obsVars) {
 #' true_means = group_means + matrix(rnorm(n*d, sd=0.1),n,d)
 #' obsVars = matrix(rchisq(n*d,1), n, d)
 #' obsData = matrix(rnorm(n*d, mean=as.vector(true_means), sd=sqrt(as.vector(obsVars))), n, d)
-#' DPMUnc(obsData, obsVars, "test_output", 1234)
+#' # The hyperparameters should be carefully checked against the data.
+#' alpha0 = 2; beta0 = 0.2 * mean(apply(obsData, 2, var)); kappa0 = 0.5
+#' DPMUnc(obsData, obsVars, "test_output", 1234,
+#'        kappa0=kappa0, alpha0=alpha0, beta0=beta0)
 DPMUnc <- function(obsData,obsVars,saveFileDir,seed,
+                   kappa0, alpha0, beta0,
                    K=floor(nrow(obsData)/2), nIts = 100000, thinningFreq = 10,
                    saveClusterParams=TRUE, saveLatentObs=FALSE,
                    quiet=TRUE, scaleData=FALSE) {
@@ -104,7 +111,10 @@ DPMUnc <- function(obsData,obsVars,saveFileDir,seed,
             nIts, thinningFreq, quiet,
             saveClusterParams, saveLatentObs,
             saveFileDir,
-            currentAllocations)
+            currentAllocations,
+            kappa0,
+            alpha0,
+            beta0)
 }
 
 #' experimental_resumeDPMUnc - Resume run of Dirichlet Process Mixture Modeller taking uncertainty of data points into account
@@ -113,6 +123,9 @@ DPMUnc <- function(obsData,obsVars,saveFileDir,seed,
 #' @param obsVars The observed variances of the data (n observations x p variables)
 #' @param saveFileDir Directory where all output will be saved, and where existing output should be found
 #' @param seed Seed for random number generator, to make the function deterministic.
+#' @param kappa0 Hyperparameter for Normal-Gamma prior on cluster parameters
+#' @param alpha0 Hyperparameter for Normal-Gamma prior on cluster parameters
+#' @param beta0 Hyperparameter for Normal-Gamma prior on cluster parameters
 #' @param K Initial number of clusters.
 #' @param nIts Total number of iterations to run. The user should check they are happy
 #' that the model has converged before using any of the results.
@@ -143,12 +156,17 @@ DPMUnc <- function(obsData,obsVars,saveFileDir,seed,
 #' true_means = group_means + matrix(rnorm(n*d, sd=0.1),n,d)
 #' obsVars = matrix(rchisq(n*d,1), n, d)
 #' obsData = matrix(rnorm(n*d, mean=as.vector(true_means), sd=sqrt(as.vector(obsVars))), n, d)
-#' DPMUnc(obsData, obsVars, "test_output", 1234, nIts=10000)
-#' experimental_resumeDPMUnc(obsData, obsVars, "test_output", 1234, nIts=100000)
+#' # The hyperparameters should be carefully checked against the data.
+#' alpha0 = 2; beta0 = 0.2 * mean(apply(obsData, 2, var)); kappa0 = 0.5
+#' DPMUnc(obsData, obsVars, "test_output", 1234,
+#'        kappa0=kappa0, alpha0=alpha0, beta0=beta0, nIts=10000)
+#' experimental_resumeDPMUnc(obsData, obsVars, "test_output", 1234,
+#'                           kappa0=kappa0, alpha0=alpha0, beta0=beta0, nIts=100000)
 experimental_resumeDPMUnc <- function(obsData,obsVars,saveFileDir,seed,
-                   K=floor(nrow(obsData)/2), nIts = 100000, thinningFreq = 10,
-                   saveClusterParams=TRUE, saveLatentObs=FALSE,
-                   quiet=TRUE, scaleData=FALSE) {
+                                      kappa0, alpha0, beta0,
+                                      K=floor(nrow(obsData)/2), nIts = 100000, thinningFreq = 10,
+                                      saveClusterParams=TRUE, saveLatentObs=FALSE,
+                                      quiet=TRUE, scaleData=FALSE) {
   numLinesSoFar = count_lines(paste0(saveFileDir, "/alpha.csv"))
   latentObservations = read_line_n(paste0(saveFileDir, "/latentObservations.csv"), numLinesSoFar, nDim=ncol(obsData))
   clusterAllocations = read_line_n(paste0(saveFileDir, "/clusterAllocations.csv"), numLinesSoFar, nDim=1)
@@ -172,5 +190,8 @@ experimental_resumeDPMUnc <- function(obsData,obsVars,saveFileDir,seed,
                saveFileDir,
                clusterAllocations,
                latentObservations,
-               alpha_concentration)
+               alpha_concentration,
+               kappa0,
+               alpha0,
+               beta0)
 }

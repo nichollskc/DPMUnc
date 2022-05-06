@@ -9,6 +9,9 @@ DPMUnc(
   obsVars,
   saveFileDir,
   seed,
+  kappa0,
+  alpha0,
+  beta0,
   K = floor(nrow(obsData)/2),
   nIts = 1e+05,
   thinningFreq = 10,
@@ -26,6 +29,12 @@ DPMUnc(
 \item{saveFileDir}{Directory where all output will be saved}
 
 \item{seed}{Seed for random number generator, to make the function deterministic.}
+
+\item{kappa0}{Hyperparameter for Normal-Gamma prior on cluster parameters}
+
+\item{alpha0}{Hyperparameter for Normal-Gamma prior on cluster parameters}
+
+\item{beta0}{Hyperparameter for Normal-Gamma prior on cluster parameters}
 
 \item{K}{Initial number of clusters.}
 
@@ -64,5 +73,8 @@ group_means = matrix(rep(classes, d), n, d)
 true_means = group_means + matrix(rnorm(n*d, sd=0.1),n,d)
 obsVars = matrix(rchisq(n*d,1), n, d)
 obsData = matrix(rnorm(n*d, mean=as.vector(true_means), sd=sqrt(as.vector(obsVars))), n, d)
-DPMUnc(obsData, obsVars, "test_output", 1234)
+# The hyperparameters should be carefully checked against the data.
+alpha0 = 2; beta0 = 0.2 * mean(apply(obsData, 2, var)); kappa0 = 0.5
+DPMUnc(obsData, obsVars, "test_output", 1234,
+       kappa0=kappa0, alpha0=alpha0, beta0=beta0)
 }
