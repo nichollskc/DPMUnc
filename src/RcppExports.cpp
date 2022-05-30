@@ -12,8 +12,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // runDPMUnc
-void runDPMUnc(arma::mat observedData, arma::mat observedVars, int totalIterations, int thinningFreq, bool quiet, bool saveClusterParams, bool saveLatentObs, std::string outputDir, arma::uvec clusterAllocations);
-RcppExport SEXP _DPMUnc_runDPMUnc(SEXP observedDataSEXP, SEXP observedVarsSEXP, SEXP totalIterationsSEXP, SEXP thinningFreqSEXP, SEXP quietSEXP, SEXP saveClusterParamsSEXP, SEXP saveLatentObsSEXP, SEXP outputDirSEXP, SEXP clusterAllocationsSEXP) {
+void runDPMUnc(arma::mat observedData, arma::mat observedVars, int totalIterations, int thinningFreq, bool quiet, bool saveClusterParams, bool saveLatentObs, std::string outputDir, arma::uvec clusterAllocations, double kappa0, double alpha0, double beta0);
+RcppExport SEXP _DPMUnc_runDPMUnc(SEXP observedDataSEXP, SEXP observedVarsSEXP, SEXP totalIterationsSEXP, SEXP thinningFreqSEXP, SEXP quietSEXP, SEXP saveClusterParamsSEXP, SEXP saveLatentObsSEXP, SEXP outputDirSEXP, SEXP clusterAllocationsSEXP, SEXP kappa0SEXP, SEXP alpha0SEXP, SEXP beta0SEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type observedData(observedDataSEXP);
@@ -25,13 +25,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type saveLatentObs(saveLatentObsSEXP);
     Rcpp::traits::input_parameter< std::string >::type outputDir(outputDirSEXP);
     Rcpp::traits::input_parameter< arma::uvec >::type clusterAllocations(clusterAllocationsSEXP);
-    runDPMUnc(observedData, observedVars, totalIterations, thinningFreq, quiet, saveClusterParams, saveLatentObs, outputDir, clusterAllocations);
+    Rcpp::traits::input_parameter< double >::type kappa0(kappa0SEXP);
+    Rcpp::traits::input_parameter< double >::type alpha0(alpha0SEXP);
+    Rcpp::traits::input_parameter< double >::type beta0(beta0SEXP);
+    runDPMUnc(observedData, observedVars, totalIterations, thinningFreq, quiet, saveClusterParams, saveLatentObs, outputDir, clusterAllocations, kappa0, alpha0, beta0);
     return R_NilValue;
 END_RCPP
 }
 // resumeDPMUnc
-void resumeDPMUnc(arma::mat observedData, arma::mat observedVars, int remainingIterations, int thinningFreq, bool quiet, bool saveClusterParams, bool saveLatentObs, std::string outputDir, arma::uvec clusterAllocations, arma::mat latentObservations, double alpha_concentration);
-RcppExport SEXP _DPMUnc_resumeDPMUnc(SEXP observedDataSEXP, SEXP observedVarsSEXP, SEXP remainingIterationsSEXP, SEXP thinningFreqSEXP, SEXP quietSEXP, SEXP saveClusterParamsSEXP, SEXP saveLatentObsSEXP, SEXP outputDirSEXP, SEXP clusterAllocationsSEXP, SEXP latentObservationsSEXP, SEXP alpha_concentrationSEXP) {
+void resumeDPMUnc(arma::mat observedData, arma::mat observedVars, int remainingIterations, int thinningFreq, bool quiet, bool saveClusterParams, bool saveLatentObs, std::string outputDir, arma::uvec clusterAllocations, arma::mat latentObservations, double alpha_concentration, double kappa0, double alpha0, double beta0);
+RcppExport SEXP _DPMUnc_resumeDPMUnc(SEXP observedDataSEXP, SEXP observedVarsSEXP, SEXP remainingIterationsSEXP, SEXP thinningFreqSEXP, SEXP quietSEXP, SEXP saveClusterParamsSEXP, SEXP saveLatentObsSEXP, SEXP outputDirSEXP, SEXP clusterAllocationsSEXP, SEXP latentObservationsSEXP, SEXP alpha_concentrationSEXP, SEXP kappa0SEXP, SEXP alpha0SEXP, SEXP beta0SEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type observedData(observedDataSEXP);
@@ -45,14 +48,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::uvec >::type clusterAllocations(clusterAllocationsSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type latentObservations(latentObservationsSEXP);
     Rcpp::traits::input_parameter< double >::type alpha_concentration(alpha_concentrationSEXP);
-    resumeDPMUnc(observedData, observedVars, remainingIterations, thinningFreq, quiet, saveClusterParams, saveLatentObs, outputDir, clusterAllocations, latentObservations, alpha_concentration);
+    Rcpp::traits::input_parameter< double >::type kappa0(kappa0SEXP);
+    Rcpp::traits::input_parameter< double >::type alpha0(alpha0SEXP);
+    Rcpp::traits::input_parameter< double >::type beta0(beta0SEXP);
+    resumeDPMUnc(observedData, observedVars, remainingIterations, thinningFreq, quiet, saveClusterParams, saveLatentObs, outputDir, clusterAllocations, latentObservations, alpha_concentration, kappa0, alpha0, beta0);
     return R_NilValue;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_DPMUnc_runDPMUnc", (DL_FUNC) &_DPMUnc_runDPMUnc, 9},
-    {"_DPMUnc_resumeDPMUnc", (DL_FUNC) &_DPMUnc_resumeDPMUnc, 11},
+    {"_DPMUnc_runDPMUnc", (DL_FUNC) &_DPMUnc_runDPMUnc, 12},
+    {"_DPMUnc_resumeDPMUnc", (DL_FUNC) &_DPMUnc_resumeDPMUnc, 14},
     {NULL, NULL, 0}
 };
 

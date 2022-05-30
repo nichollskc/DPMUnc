@@ -764,9 +764,9 @@ class MixtureModeller {
                     arma::uvec clusterAllocations,
                     arma::mat latentObservations,
                     double alpha_concentration,
-                    double kappa0 = 0.01,
-                    double alpha0 = 2,
-                    double beta0 = 0.1)
+                    double kappa0,
+                    double alpha0,
+                    double beta0)
         : observedData(observedData), observedVars(observedVars),
           latentObservations(latentObservations),
           clusterAllocations(clusterAllocations),
@@ -801,6 +801,9 @@ class MixtureModeller {
 // latent observations take up more space than other saved variables.
 // @param outputDir Directory where all output will be saved
 // @param clusterAllocations Initial cluster allocations.
+// @param kappa0 Hyperparameter for Normal-Gamma prior on cluster parameters
+// @param alpha0 Hyperparameter for Normal-Gamma prior on cluster parameters
+// @param beta0 Hyperparameter for Normal-Gamma prior on cluster parameters
 //
 // @export
 //
@@ -813,7 +816,10 @@ void runDPMUnc(arma::mat observedData,
                bool saveClusterParams,
                bool saveLatentObs,
                std::string outputDir,
-               arma::uvec clusterAllocations) {
+               arma::uvec clusterAllocations,
+               double kappa0,
+               double alpha0,
+               double beta0) {
   DEBUG(4, "Initialised modeller with data\n" << observedData)
   arma::mat latentObservations = observedData;
   double alpha_concentration = 1;
@@ -827,7 +833,10 @@ void runDPMUnc(arma::mat observedData,
                   outputDir,
                   clusterAllocations,
                   latentObservations,
-                  alpha_concentration);
+                  alpha_concentration,
+                  kappa0,
+                  alpha0,
+                  beta0);
 }
 
 // resumeDPMUnc - Resume running Dirichlet Process Mixture Modeller taking uncertainty of data points into account
@@ -846,11 +855,14 @@ void runDPMUnc(arma::mat observedData,
 // @param saveLatentObs Boolean, determining whether the latent observations (underlying true observations)
 // for every saved iteration should be saved in a file or not. Both cluster parameters and
 // latent observations take up more space than other saved variables.
+// @param outputDir Directory where all output will be saved, and where existing output should be found
 // @param clusterAllocations Vector giving the cluster that each data point is allocated to.
 // @param latentObservations Matrix of form (n observations x p variables) with each row giving the latent estimated "true"
 // position of one of the data points.
 // @param alpha_concentration Current value of the concentration parameter alpha.
-// @param outputDir Directory where all output will be saved, and where existing output should be found
+// @param kappa0 Hyperparameter for Normal-Gamma prior on cluster parameters
+// @param alpha0 Hyperparameter for Normal-Gamma prior on cluster parameters
+// @param beta0 Hyperparameter for Normal-Gamma prior on cluster parameters
 //
 // @export
 //
@@ -865,7 +877,10 @@ void resumeDPMUnc(arma::mat observedData,
                   std::string outputDir,
                   arma::uvec clusterAllocations,
                   arma::mat latentObservations,
-                  double alpha_concentration) {
+                  double alpha_concentration,
+                  double kappa0,
+                  double alpha0,
+                  double beta0) {
   DEBUG(4, "Reinitialised modeller with data\n" << observedData)
   DEBUG(4, "Latent obs at resumption\n" << latentObservations)
   DEBUG(4, "Cluster allocations at resumption\n" << clusterAllocations)
@@ -880,5 +895,8 @@ void resumeDPMUnc(arma::mat observedData,
                   outputDir,
                   clusterAllocations,
                   latentObservations,
-                  alpha_concentration);
+                  alpha_concentration,
+                  kappa0,
+                  alpha0,
+                  beta0);
 }
