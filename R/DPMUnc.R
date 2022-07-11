@@ -88,12 +88,19 @@ scale_data <- function(obsData, obsVars) {
 #'        kappa0=kappa0, alpha0=alpha0, beta0=beta0)
 DPMUnc <- function(obsData,obsVars,saveFileDir,seed,
                    kappa0, alpha0, beta0,
-                   K=floor(nrow(obsData)/2), nIts = 100000, thinningFreq = 10,
+                   K=if(is.vector(obsData)) { floor(length(obsData)/2) } else { floor(nrow(obsData)/2) },
+                   nIts = 100000, thinningFreq = 10,
                    saveClusterParams=TRUE, saveLatentObs=FALSE,
                    quiet=TRUE, scaleData=FALSE) {
   if(!dir.exists(saveFileDir)) {
       dir.create(saveFileDir, recursive=TRUE)
   }
+
+  ## deal with vector arguments
+  if(is.vector(obsData))
+    obsData=matrix(obsData,ncol=1)
+  if(is.vector(obsVars))
+    obsVars=matrix(obsVars,ncol=1)
 
   set.seed(seed, sample.kind="Rejection", normal.kind="Inversion", kind="Mersenne-Twister")
 
