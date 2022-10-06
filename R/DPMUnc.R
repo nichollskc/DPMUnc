@@ -148,20 +148,6 @@ DPMUnc <- function(obsData,obsVars,saveFileDir,seed,
 #' Else, the raw data will be used.
 #'
 #' @export
-#'
-#' @examples
-#' n = 50; d = 5; k = 4
-#' classes = sample(1:k, n, replace=TRUE)
-#' group_means = matrix(rep(classes, d), n, d)
-#' true_means = group_means + matrix(rnorm(n*d, sd=0.1),n,d)
-#' obsVars = matrix(rchisq(n*d,1), n, d)
-#' obsData = matrix(rnorm(n*d, mean=as.vector(true_means), sd=sqrt(as.vector(obsVars))), n, d)
-#' # The hyperparameters should be carefully checked against the data.
-#' alpha0 = 2; beta0 = 0.2 * mean(apply(obsData, 2, var)); kappa0 = 0.5
-#' DPMUnc(obsData, obsVars, "test_output", 1234,
-#'        kappa0=kappa0, alpha0=alpha0, beta0=beta0, nIts=10000)
-#' experimental_resumeDPMUnc(obsData, obsVars, "test_output", 1234,
-#'                           kappa0=kappa0, alpha0=alpha0, beta0=beta0, nIts=100000)
 experimental_resumeDPMUnc <- function(obsData,obsVars,saveFileDir,seed,
                                       kappa0, alpha0, beta0,
                                       K=floor(nrow(obsData)/2), nIts = 100000, thinningFreq = 10,
